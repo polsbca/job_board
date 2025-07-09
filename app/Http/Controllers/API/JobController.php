@@ -19,7 +19,7 @@ class JobController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:sanctum')->except(['index', 'show']);
+        $this->middleware('auth:sanctum')->except(['index', 'show', 'search', 'similar', 'trackView']);
         $this->middleware('can:update,job')->only(['update', 'destroy']);
     }
 
@@ -179,19 +179,149 @@ class JobController extends Controller
      */
     public function destroy(Job $job)
     {
-        // Check if user is authorized to delete this job
-        if (auth()->user()->cannot('delete', $job)) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'You are not authorized to delete this job'
-            ], 403);
+        // authorization handled by policy via constructor
+        $job->delete();
+        return response()->json(['status' => 'success', 'message' => 'Job deleted']);
+    }
+
+    /**
+     * Search & filter jobs for frontend list (AJAX)
+     */
+    public function search(Request $request)
+    {
+        $query = Job::query()->where('status', 'active');
+
+        // filters
+        if ($request->filled('keyword')) {
+            $kw = $request->keyword;
+            $query->where(function ($q) use ($kw) {
+                $q->where('title', 'like', "%{$kw}%")
+                  ->orWhere('company', 'like', "%{$kw}%");
+            });
+        }
+        if ($request->filled('location')) {
+            $query->where('location', 'like', '%' . $request->location . '%');
+        }
+        if ($request->filled('category')) {
+            $query->where('category', $request->category);
+        }
+        if ($request->filled('type')) {
+            $query->where('type', $request->type);
+        }
+        if ($request->filled('salary_min')) {
+            $query->where('salary', '>=', $request->salary_min);
+        }
+        if ($request->filled('salary_max')) {
+            $query->where('salary', '<=', $request->salary_max);
         }
 
-        $job->delete();
+        $jobs = $query->latest()->paginate(9);
+
+        // transform
+        $data = $jobs->items();
+        $data = array_map(function ($job) {
+            return [
+                'id' => $job->id,
+                'title' => $job->title,
+                'company' => $job->company,
+                'location' => $job->location,
+                'salary' => $job->salary,
+                'type' => $job->type,
+                'created_at_human' => $job->created_at->diffForHumans(),
+            ];
+        }, $data);
 
         return response()->json([
-            'status' => 'success',
-            'message' => 'Job deleted successfully'
+            'data' => $data,
+            'current_page' => $jobs->currentPage(),
+            'last_page' => $jobs->lastPage(),
         ]);
+    }
+
+    /**
+     * Return similar jobs based on category/type
+     */
+    public function similar(Request $request)
+    {
+        $jobId = $request->get('job_id');
+        $job = Job::find($jobId);
+        if (!$job) {
+            return response()->json(['data' => []]);
+        }
+        $similar = Job::where('id', '!=', $job->id)
+            ->where('status', 'active')
+            ->where(function ($q) use ($job) {
+                $q->where('category', $job->category)
+                  ->orWhere('type', $job->type);
+            })
+            ->latest()
+            ->take(6)
+            ->get()
+            ->map(function ($j) {
+                return [
+                    'id' => $j->id,
+                    'title' => $j->title,
+                    'company' => $j->company,
+                    'location' => $j->location,
+                    'salary' => $j->salary,
+                    'type' => $j->type,
+                ];
+            });
+        return response()->json(['data' => $similar]);
+    }
+
+    /**
+     * Toggle save/un-save job
+     */
+    public function toggleSave(Job $job)
+    {
+        $user = request()->user();
+        $isSaved = $user->savedJobs()->toggle($job->id);
+        // toggle returns array with attached/detached; recalc
+        $count = $job->saves()->count();
+        return response()->json(['is_saved' => $user->savedJobs->contains($job->id), 'saves_count' => $count]);
+    }
+
+    /**
+     * List saved jobs for applicant dashboard
+     */
+    public function saved(Request $request)
+    {
+        $jobs = $request->user()->savedJobs()->latest()->get()->map(function ($j) {
+            return [
+                'id' => $j->id,
+                'title' => $j->title,
+                'company' => $j->company,
+                'location' => $j->location,
+            ];
+        });
+        return response()->json($jobs);
+    }
+
+    /**
+     * List employer's own jobs for dashboard
+     */
+    public function myJobs(Request $request)
+    {
+        $user = $request->user();
+        $jobs = $user->jobs()->latest()->get()->map(function ($j) {
+            return [
+                'id' => $j->id,
+                'title' => $j->title,
+                'status' => $j->status,
+                'applications_count' => $j->applications()->count(),
+                'created_at' => $j->created_at->toDateString(),
+            ];
+        });
+        return response()->json($jobs);
+    }
+
+    /**
+     * Track a job view for stats
+     */
+    public function trackView(Job $job)
+    {
+        $job->increment('views_count');
+        return response()->json(['status' => 'success']);
     }
 }

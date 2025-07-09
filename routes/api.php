@@ -41,23 +41,37 @@ Route::middleware('auth:sanctum')->group(function () {
     // Jobs routes
     Route::prefix('jobs')->group(function () {
         // Public routes (no auth required)
+        Route::post('/search', [JobController::class, 'search']); // filtering list
+        Route::get('/similar', [JobController::class, 'similar']);
+        Route::post('/{job}/view', [JobController::class, 'trackView']);
         Route::get('/', [JobController::class, 'index']);
         Route::get('/{job}', [JobController::class, 'show']);
         
-        // Protected routes (auth required)
-        Route::middleware(['auth:sanctum'])->group(function () {
-            // Employer-only routes
-            Route::middleware(['role:employer'])->group(function () {
-                Route::post('/', [JobController::class, 'store']);
-                Route::put('/{job}', [JobController::class, 'update']);
-                Route::delete('/{job}', [JobController::class, 'destroy']);
-                
-                // Get applications for a specific job (employer's own jobs only)
-                Route::get('/{job}/applications', [JobController::class, 'applications']);
-            });
+        // Employer-only routes
+        Route::middleware(['role:employer'])->group(function () {
+            Route::post('/', [JobController::class, 'store']);
+            Route::put('/{job}', [JobController::class, 'update']);
+            Route::delete('/{job}', [JobController::class, 'destroy']);
+            
+            // Get applications for a specific job (employer's own jobs only)
+            Route::get('/{job}/applications', [JobController::class, 'applications']);
+        });
+
+        // Applicant actions
+        Route::middleware(['role:applicant'])->group(function () {
+            Route::post('/{job}/save', [JobController::class, 'toggleSave']);
         });
     });
     
+    // Saved jobs for applicants
+    Route::middleware(['role:applicant'])->get('/saved-jobs', [JobController::class, 'saved']);
+
+    // Employer dashboard routes
+    Route::middleware(['role:employer'])->group(function () {
+        Route::get('/employer/jobs', [JobController::class, 'myJobs']);
+        Route::get('/employer/applications', [ApplicationController::class, 'index']);
+    });
+
     // Applications routes
     Route::prefix('applications')->group(function () {
         // Protected routes (auth required)

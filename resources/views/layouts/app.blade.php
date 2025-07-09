@@ -34,22 +34,22 @@
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('home')">Home</a>
+                            <a class="nav-link" href="{{ route('home') }}">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('jobs.index')">Browse Jobs</a>
+                            <a class="nav-link" href="{{ route('jobs.index') }}">Browse Jobs</a>
                         </li>
                         @auth
                             @if(auth()->user()->role === 'employer')
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('jobs.create')">Post a Job</a>
+                                    <a class="nav-link" href="{{ route('jobs.create') }}">Post a Job</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('employer.dashboard')">Dashboard</a>
+                                    <a class="nav-link" href="{{ route('employer.dashboard') }}">Dashboard</a>
                                 </li>
                             @elseif(auth()->user()->role === 'applicant')
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('applications.index')">My Applications</a>
+                                    <a class="nav-link" href="{{ route('applications.index') }}">My Applications</a>
                                 </li>
                             @endif
                         @endauth
@@ -60,10 +60,10 @@
                         <!-- Authentication Links -->
                         @guest
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('login')">Login</a>
+                                <a class="nav-link" href="{{ route('login') }}">Login</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('register')">Register</a>
+                                <a class="nav-link" href="{{ route('register') }}">Register</a>
                             </li>
                         @else
                             <li class="nav-item dropdown">
@@ -72,10 +72,10 @@
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-end">
-                                    <a class="dropdown-item" href="{{ route('profile.edit')">
+                                    <a class="dropdown-item" href="{{ route('profile.edit') }}">
                                         Profile
                                     </a>
-                                    <a class="dropdown-item" href="{{ route('logout')"
+                                    <a class="dropdown-item" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
                                         {{ __('Logout') }}
