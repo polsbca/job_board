@@ -17,9 +17,15 @@
                             <label class="form-label">Password</label>
                             <input type="password" name="password" class="form-control" required>
                         </div>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="remember" id="remember">
+                                <label class="form-check-label" for="remember">Remember me</label>
+                            </div>
+                        </div>
                         <button type="submit" class="btn btn-primary w-100">Login</button>
                     </form>
-                    <p class="small text-center mt-3 mb-0">Don't have an account? <a href="/register">Register</a></p>
+                    <p class="small text-center mt-3 mb-0">Don't have an account? <a href="{{ route('register') }}">Register</a></p>
                 </div>
             </div>
         </div>
@@ -32,19 +38,45 @@
 const form = document.getElementById('login-form');
 form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const data = new FormData(form);
+    
     try {
-        const res = await axios.post('/api/auth/login', data);
-        const token = res.data.token;
+        const response = await axios.post('/api/auth/login', {
+            email: form.email.value,
+            password: form.password.value,
+            remember_me: form.remember?.checked
+        });
+
+        // Store the token
+        const token = response.data.authorization.token;
         localStorage.setItem('token', token);
-        // set axios default header
+        
+        // Set default auth header
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-        // redirect based on role
-        const role = res.data.user.role;
-        if(role === 'employer') window.location.href = '/dashboard/employer';
-        else window.location.href = '/dashboard/applicant';
-    } catch (err) {
-        alert(err.response?.data?.message || 'Login failed');
+        
+        // Redirect based on role
+        const role = response.data.user.role;
+        if (role === 'employer') {
+            window.location.href = '/dashboard/employer';
+        } else if (role === 'applicant') {
+            window.location.href = '/dashboard/applicant';
+        } else if (role === 'admin') {
+            window.location.href = '/admin/dashboard';
+        } else {
+            window.location.href = '/dashboard';
+        }
+    } catch (error) {
+        let errorMessage = 'Login failed. Please try again.';
+        if (error.response) {
+            // Server responded with a status other than 2xx
+            errorMessage = error.response.data.message || errorMessage;
+            if (error.response.data.errors) {
+                errorMessage = Object.values(error.response.data.errors).flat().join(' ');
+            }
+        } else if (error.request) {
+            // Request was made but no response received
+            errorMessage = 'No response from server. Please check your connection.';
+        }
+        alert(errorMessage);
     }
 });
 </script>

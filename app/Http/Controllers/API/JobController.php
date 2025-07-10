@@ -97,6 +97,9 @@ class JobController extends Controller
 
         $job = $request->user()->jobs()->create($request->all());
 
+        // Broadcast real-time event
+        event(new \App\Events\JobPosted($job));
+
         return response()->json([
             'status' => 'success',
             'message' => 'Job created successfully',
