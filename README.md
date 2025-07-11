@@ -74,6 +74,19 @@ Visit `http://localhost:8000` to explore.
 php artisan test   # or: composer test
 ```
 
+## Code of Conduct
+
+We are committed to fostering a welcoming and inclusive environment. Please review and follow the [Laravel Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct) when contributing to this project.
+
+## Security Vulnerabilities
+
+If you discover a security vulnerability within this application or in one of its dependencies, please open an issue or e-mail the maintainer at **security@example.com**. All reports will be promptly addressed. For vulnerabilities specific to the Laravel framework, you may also contact [Taylor Otwell](mailto:taylor@laravel.com).
+
+## License
+
+This Job Board application is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+
 ---
 
 The remainder of this document contains the default Laravel README for reference.
