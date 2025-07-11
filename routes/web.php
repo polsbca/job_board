@@ -30,9 +30,16 @@ Route::middleware(['auth'])->group(function () {
             return redirect()->route('admin.dashboard');
         } elseif (auth()->user()->hasRole('applicant')) {
             return redirect()->route('applicant.dashboard');
+        } elseif (auth()->user()->hasRole('employer')) {
+            return redirect()->route('employer.dashboard');
         }
         return redirect()->route('home');
     })->name('dashboard');
+    
+    // Employer dashboard
+    Route::middleware(['role:employer'])->group(function () {
+        Route::get('/dashboard/employer', [\App\Http\Controllers\Employer\DashboardController::class, 'index'])->name('employer.dashboard');
+    });
     
     // Profile routes
     Route::get('/profile', [\App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');

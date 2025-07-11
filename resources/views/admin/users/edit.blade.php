@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+@extends('components.admin-layout')
 
 @section('content')
 <div class="container py-4">

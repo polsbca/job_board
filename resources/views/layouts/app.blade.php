@@ -125,10 +125,10 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-6">
-                    <h5>About {{ config('app.name') }}</h5>
+                    <h5>About Job Board</h5>
                     <p>Find your dream job or the perfect candidate for your company.</p>
                 </div>
-                <div class="col-md-3">
+                {{-- <div class="col-md-3">
                     <h5>Quick Links</h5>
                     <ul class="list-unstyled">
                         <li><a href="#" class="text-white">Browse Jobs</a></li>
@@ -136,8 +136,8 @@
                         <li><a href="#" class="text-white">About Us</a></li>
                         <li><a href="#" class="text-white">Contact</a></li>
                     </ul>
-                </div>
-                <div class="col-md-3">
+                </div> --}}
+                {{-- <div class="col-md-3">
                     <h5>Connect With Us</h5>
                     <div class="social-links">
                         <a href="#" class="text-white me-2"><i class="fab fa-facebook"></i></a>
@@ -145,11 +145,11 @@
                         <a href="#" class="text-white me-2"><i class="fab fa-linkedin"></i></a>
                         <a href="#" class="text-white"><i class="fab fa-github"></i></a>
                     </div>
-                </div>
+                </div> --}}
             </div>
             <hr class="my-4">
             <div class="text-center">
-                <p class="mb-0">&copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.</p>
+                <p class="mb-0">&copy; {{ date('Y') }} Job Board. All rights reserved.</p>
             </div>
         </div>
     </footer>
