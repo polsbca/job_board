@@ -14,16 +14,20 @@
     <link rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
       crossorigin="anonymous"/>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+      {{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}
+      @vite(['resources/js/app.js'])
     
     @stack('styles')
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
 </head>
 <body class="font-sans antialiased">
     <div id="app">
         <!-- Navigation -->
         <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
             <div class="container">
-                <a class="navbar-brand" href="{{ url('/') }}">{{ config('app.name') }}</a>
+                <a class="navbar-brand" href="{{ url('/') }}">Job Board</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -58,10 +62,10 @@
                         <!-- Authentication Links -->
                         @guest
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('login') }}">Login</a>
+                                <a class="nav-link text-white fw-semibold" style="color:#ffffff !important;" href="{{ route('login') }}">Login</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('register') }}">Register</a>
+                                <a class="nav-link text-white fw-semibold" style="color:#ffffff !important;" href="{{ route('register') }}">Register</a>
                             </li>
                         @else
                             <li class="nav-item dropdown">
