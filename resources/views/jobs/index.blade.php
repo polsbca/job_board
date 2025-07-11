@@ -44,11 +44,8 @@
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Salary Range</label>
-                            <div class="d-flex gap-2">
-                                <input type="number" class="form-control" name="salary_min" placeholder="Min" min="0">
-                                <input type="number" class="form-control" name="salary_max" placeholder="Max" min="0">
-                            </div>
+                            <label class="form-label">Minimum Salary</label>
+                            <input type="number" class="form-control" name="salary" placeholder="Enter minimum salary" min="0">
                         </div>
                         <button type="submit" class="btn btn-primary w-100">
                             <i class="fas fa-search me-1"></i> Apply Filters
@@ -76,21 +73,33 @@
 
 @push('scripts')
 <script>
-// Initial load
-loadJobs();
+// Make filtersForm globally accessible
+let filtersForm;
 
-// Handle filters form
-const filtersForm = document.getElementById('filters-form');
-filtersForm.addEventListener('submit', function (e) {
-    e.preventDefault();
+// Wait for DOM to be fully loaded
+document.addEventListener('DOMContentLoaded', function() {
+    filtersForm = document.getElementById('filters-form');
+    
+    // Handle filters form
+    filtersForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        loadJobs();
+    });
+
+    // Initial load
     loadJobs();
 });
 
 async function loadJobs(page = 1) {
     const container = document.getElementById('jobs-container');
-    container.innerHTML = `<div class="col-12 text-center my-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>`;
+    container.innerHTML = `<div class="col-12 text-center my-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>`;
 
-    const formData = new FormData(filtersForm);
+    // Create form data from the filters form
+    const formData = new FormData(filtersForm || document.createElement('form'));
     formData.append('page', page);
 
     try {
@@ -98,53 +107,98 @@ async function loadJobs(page = 1) {
         const { data, current_page, last_page } = response.data;
 
         if (data.length === 0) {
-            container.innerHTML = '<div class="col-12"><p class="text-center text-muted">No jobs found.</p></div>';
+            container.innerHTML = `
+                <div class="col-12 text-center">
+                    <div class="alert alert-info">
+                        No jobs found matching your criteria.
+                    </div>
+                </div>
+            `;
+            document.getElementById('pagination-wrapper').innerHTML = '';
         } else {
-            container.innerHTML = data.map(job => jobCardTemplate(job)).join('');
+            container.innerHTML = data.map(jobCardTemplate).join('');
+            
+            // Update pagination
+            const pagination = document.getElementById('pagination-wrapper');
+            pagination.innerHTML = `
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        ${current_page > 1 ? `
+                            <li class="page-item">
+                                <a class="page-link" href="#" onclick="loadJobs(${current_page - 1})">Previous</a>
+                            </li>
+                        ` : ''}
+                        ${Array.from({ length: last_page }, (_, i) => i + 1)
+                            .map(pageNum => `
+                                <li class="page-item ${pageNum === current_page ? 'active' : ''}">
+                                    <a class="page-link" href="#" onclick="loadJobs(${pageNum})">${pageNum}</a>
+                                </li>
+                            `)
+                            .join('')}
+                        ${current_page < last_page ? `
+                            <li class="page-item">
+                                <a class="page-link" href="#" onclick="loadJobs(${current_page + 1})">Next</a>
+                            </li>
+                        ` : ''}
+                    </ul>
+                </nav>
+            `;
         }
-
-        renderPagination(current_page, last_page);
     } catch (error) {
         console.error('Error loading jobs:', error);
-        container.innerHTML = '<div class="col-12"><div class="alert alert-danger">Failed to load jobs.</div></div>';
+        container.innerHTML = `
+            <div class="col-12 text-center">
+                <div class="alert alert-danger">
+                    Error loading jobs. Please try again later.
+                </div>
+            </div>
+        `;
+        document.getElementById('pagination-wrapper').innerHTML = '';
     }
 }
 
 function jobCardTemplate(job) {
+    // Fallbacks for missing fields
+    const title = job.title ?? 'Untitled Job';
+    const company = job.company ?? 'Unknown Company';
+    const location = job.location ?? 'N/A';
+    const type = job.type ?? 'N/A';
+    const category = job.category ?? '';
+    const description = (job.description ?? '').substring(0, 100);
+    // Build job detail URL
+    const detailUrl = `/jobs/${job.id}`;
+
     return `
         <div class="col-md-6 col-lg-4">
             <div class="card h-100">
                 <div class="card-body d-flex flex-column">
-                    <h5 class="card-title">
-                        <a href="/jobs/${job.id}" class="text-decoration-none">${job.title}</a>
-                    </h5>
-                    <h6 class="card-subtitle mb-2 text-muted">${job.company}</h6>
-                    <p class="card-text small text-muted mb-2">
-                        <i class="fas fa-map-marker-alt me-1"></i>${job.location}
+                    <h5 class="card-title mb-2">${title}</h5>
+                    <p class="card-text mb-2">
+                        <span class="text-primary">${company}</span>
+                        <br>
+                        <small class="text-muted">${location}</small>
                     </p>
-                    <p class="card-text text-success fw-bold mb-4 mt-auto">$${Number(job.salary).toLocaleString()}/yr</p>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <span class="badge bg-primary">${job.type}</span>
-                        <small class="text-muted">${job.created_at_human}</small>
+                    <div class="mb-2">
+                        <span class="badge bg-primary">${type}</span>
+                        ${category ? `<span class="badge bg-secondary">${category}</span>` : ''}
+                    </div>
+                    <div class="card-text flex-grow-1">
+                        <p>${description}...</p>
+                    </div>
+                    <div class="mt-auto">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">
+                                ${new Date(job.created_at).toLocaleDateString()}
+                            </small>
+                            <a href="${detailUrl}" class="btn btn-primary btn-sm">
+                                View Details
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     `;
-}
-
-function renderPagination(current, last) {
-    const wrapper = document.getElementById('pagination-wrapper');
-    if (last <= 1) {
-        wrapper.innerHTML = '';
-        return;
-    }
-    let html = `<nav><ul class="pagination">`;
-    for (let i = 1; i <= last; i++) {
-        html += `<li class="page-item ${i === current ? 'active' : ''}"><a class="page-link" href="#" onclick="loadJobs(${i});return false;">${i}</a></li>`;
-    }
-    html += `</ul></nav>`;
-    wrapper.innerHTML = html;
 }
 </script>
 @endpush

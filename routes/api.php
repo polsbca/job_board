@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\API\JobController;
 use App\Http\Controllers\API\ApplicationController;
 
@@ -21,12 +21,21 @@ use App\Http\Controllers\API\ApplicationController;
 Route::prefix('auth')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/logout', [AuthController::class, 'logout']);
     
     // Email verification notification
     Route::post('/email/verification-notification', function (Request $request) {
         $request->user()->sendEmailVerificationNotification();
         return response()->json(['message' => 'Verification link sent!']);
     })->middleware(['auth:sanctum', 'throttle:6,1']);
+});
+
+// Public job search
+Route::prefix('jobs')->group(function () {
+    Route::post('/search', [JobController::class, 'search']); // filtering list
+    Route::get('/similar', [JobController::class, 'similar']);
+    Route::get('/', [JobController::class, 'index']);
+    Route::get('/{job}', [JobController::class, 'show']);
 });
 
 // Protected routes
@@ -38,14 +47,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/refresh', [AuthController::class, 'refresh']);
     });
 
-    // Jobs routes
+    // Protected job routes
     Route::prefix('jobs')->group(function () {
-        // Public routes (no auth required)
-        Route::post('/search', [JobController::class, 'search']); // filtering list
-        Route::get('/similar', [JobController::class, 'similar']);
         Route::post('/{job}/view', [JobController::class, 'trackView']);
-        Route::get('/', [JobController::class, 'index']);
-        Route::get('/{job}', [JobController::class, 'show']);
         
         // Employer-only routes
         Route::middleware(['role:employer'])->group(function () {

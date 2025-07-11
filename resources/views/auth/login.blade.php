@@ -7,7 +7,7 @@
             <h1 class="h4 mb-4 text-center">Login</h1>
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <form id="login-form">
+                    <form method="POST" action="{{ route('login.submit') }}">
                         @csrf
                         <div class="mb-3">
                             <label class="form-label">Email</label>
@@ -32,52 +32,3 @@
     </div>
 </div>
 @endsection
-
-@push('scripts')
-<script>
-const form = document.getElementById('login-form');
-form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    try {
-        const response = await axios.post('/api/auth/login', {
-            email: form.email.value,
-            password: form.password.value,
-            remember_me: form.remember?.checked
-        });
-
-        // Store the token
-        const token = response.data.authorization.token;
-        localStorage.setItem('token', token);
-        
-        // Set default auth header
-        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-        
-        // Redirect based on role
-        const role = response.data.user.role;
-        if (role === 'employer') {
-            window.location.href = '/dashboard/employer';
-        } else if (role === 'applicant') {
-            window.location.href = '/dashboard/applicant';
-        } else if (role === 'admin') {
-            window.location.href = '/admin/dashboard';
-        } else {
-            window.location.href = '/dashboard';
-        }
-    } catch (error) {
-        let errorMessage = 'Login failed. Please try again.';
-        if (error.response) {
-            // Server responded with a status other than 2xx
-            errorMessage = error.response.data.message || errorMessage;
-            if (error.response.data.errors) {
-                errorMessage = Object.values(error.response.data.errors).flat().join(' ');
-            }
-        } else if (error.request) {
-            // Request was made but no response received
-            errorMessage = 'No response from server. Please check your connection.';
-        }
-        alert(errorMessage);
-    }
-});
-</script>
-@endpush

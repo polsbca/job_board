@@ -56,9 +56,11 @@
             <div class="card mb-4">
                 <div class="card-body text-center">
                     <h5 class="card-title mb-3">Company Info</h5>
-                    <p class="small text-muted mb-0">{{ $job->employer->bio ?? 'No information provided.' }}</p>
-                    @if($job->employer->website)
-                        <a href="{{ $job->employer->website }}" target="_blank" class="d-block mt-2">Website</a>
+                    <p class="small text-muted mb-0">
+                        {{ $job->user->bio ?? 'No information provided.' }}
+                    </p>
+                    @if($job->user && $job->user->website)
+                        <a href="{{ $job->user->website }}" target="_blank" class="d-block mt-2">Website</a>
                     @endif
                 </div>
             </div>

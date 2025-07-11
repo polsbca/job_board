@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -56,7 +57,17 @@ class Job extends Model
      */
     public function applications(): HasMany
     {
-        return $this->hasMany(Application::class);
+        return $this->hasMany(Application::class, 'job_id');
+    }
+
+    /**
+     * Get the users who have saved this job.
+     */
+    public function savedByUsers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'saved_jobs')
+            ->withPivot('notes')
+            ->withTimestamps();
     }
 
     /**

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Controller as BaseController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
 
-class AuthController extends Controller
+class AuthController extends BaseController
 {
     /**
      * Create a new AuthController instance.
@@ -103,7 +103,7 @@ class AuthController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'user' => $user,
+            'user' => array_merge($user->toArray(), ['role' => $user->role]),
             'authorization' => [
                 'token' => $token,
                 'type' => 'bearer',
