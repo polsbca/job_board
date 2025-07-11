@@ -2,10 +2,18 @@
 
 @section('content')
 <div class="container py-5">
-    <div class="row mb-4">
+    <div class="row mb-4 align-items-center">
         <div class="col-md-8">
             <h1 class="h3 mb-0">Applicant Dashboard</h1>
             <p class="text-muted">Welcome back, {{ auth()->user()->name }}!</p>
+        </div>
+        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="btn btn-outline-secondary">
+                    <i class="fas fa-sign-out-alt me-1"></i> Logout
+                </button>
+            </form>
         </div>
     </div>
 
