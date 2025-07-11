@@ -8,6 +8,12 @@
         <!-- Sidebar Navigation -->
         <aside class="col-md-3 mb-4">
             <div class="list-group">
+                <a href="{{ url('/') }}" class="list-group-item list-group-item-action">
+                    <i class="fas fa-home me-1"></i> Home
+                </a>
+                <a href="{{ url('/dashboard/applicant') }}" class="list-group-item list-group-item-action">
+                    <i class="fas fa-tachometer-alt me-1"></i> Dashboard
+                </a>
                 <a href="#applications" class="list-group-item list-group-item-action active" data-bs-toggle="tab">My Applications</a>
                 <a href="#saved-jobs" class="list-group-item list-group-item-action" data-bs-toggle="tab">Saved Jobs</a>
                 <a href="#profile" class="list-group-item list-group-item-action" data-bs-toggle="tab">Profile</a>

@@ -70,4 +70,18 @@ class Application extends Model
     {
         return $this->resume_path ? asset('storage/' . $this->resume_path) : null;
     }
+
+    /**
+     * Determine the Bootstrap badge color class for the application's status.
+     */
+    public function getStatusBadgeColor(): string
+    {
+        return match ($this->status) {
+            'pending'   => 'secondary', // gray
+            'reviewing' => 'info',      // blue
+            'accepted'  => 'success',   // green
+            'rejected'  => 'danger',    // red
+            default     => 'secondary',
+        };
+    }
 }

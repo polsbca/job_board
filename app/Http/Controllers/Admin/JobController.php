@@ -34,12 +34,14 @@ class JobController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
+            'company' => 'required|string|max:255',
             'salary' => 'required|numeric|min:0',
             'location' => 'required|string|max:255',
             'category' => 'required|string|max:255',
             'status' => 'required|in:active,inactive',
         ]);
 
+        $validated['user_id'] = auth()->id();
         Job::create($validated);
 
         return Redirect::route('admin.jobs.index')->with('success', 'Job created successfully.');
@@ -69,6 +71,7 @@ class JobController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
+            'company' => 'required|string|max:255',
             'salary' => 'required|numeric|min:0',
             'location' => 'required|string|max:255',
             'category' => 'required|string|max:255',

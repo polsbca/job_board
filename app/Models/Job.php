@@ -53,6 +53,14 @@ class Job extends Model
     }
 
     /**
+     * Alias for the user relationship when referenced as employer.
+     */
+    public function employer(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /**
      * Get the applications for the job.
      */
     public function applications(): HasMany
