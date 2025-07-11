@@ -6,16 +6,16 @@
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <div class="collapse navbar-collapse" id="adminNavbar">
-            <div class="flex">
-                <!-- Logo -->
+        
+            <!-- Left nav links -->
+                <!-- removed duplicate logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('home') }}">
                         <x-application-logo class="block h-10 w-auto fill-current text-gray-600" />
                     </a>
                 </div>
 
-                            <!-- Left nav links -->
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                                     <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">
@@ -25,7 +25,7 @@
                 </div>
             </div>
 
-                        <!-- Right side user dropdown -->
+                        
                         <ul class="navbar-nav ms-auto">
                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle" href="#" id="adminUserDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -66,7 +66,7 @@
                                     </ul>
                 </li>
             </ul>
-            </div>
+        </div>
 
             
             

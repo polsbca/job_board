@@ -21,12 +21,12 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 <body class="font-sans antialiased bg-gray-100">
-    <div class="min-h-screen bg-gray-100">
+    <div class="bg-light">
         @include('admin.layouts.navigation')
 
         <!-- Page Heading -->
         <header class="bg-white shadow">
-            <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <div class="container-fluid py-3">
                 {{ $header ?? '' }}
             </div>
         </header>

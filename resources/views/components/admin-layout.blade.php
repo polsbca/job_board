@@ -20,29 +20,29 @@
 <body class="bg-light">
     <div class="wrapper">
         <!-- Sidebar -->
-        <nav id="sidebar" class="bg-dark text-white">
+        <nav id="sidebar" class="bg-light border-end">
             <div class="sidebar-header p-3">
                 <h4 class="mb-0">{{ config('app.name') }}</h4>
             </div>
 
-            <ul class="list-unstyled components">
-                <li class="active">
-                    <a href="{{ route('admin.dashboard') }}" class="text-white">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a href="{{ route('admin.dashboard') }}" class="nav-link text-dark">
                         <i class="fas fa-tachometer-alt me-2"></i> Dashboard
                     </a>
                 </li>
-                <li>
-                    <a href="{{ route('admin.jobs.index') }}" class="text-white">
+                <li class="nav-item">
+                    <a href="{{ route('admin.jobs.index') }}" class="nav-link text-dark">
                         <i class="fas fa-briefcase me-2"></i> Jobs
                     </a>
                 </li>
-                <li>
-                    <a href="{{ route('admin.users.index') }}" class="text-white">
+                <li class="nav-item">
+                    <a href="{{ route('admin.users.index') }}" class="nav-link text-dark">
                         <i class="fas fa-users me-2"></i> Users
                     </a>
                 </li>
-                <li>
-                    <a href="{{ route('admin.applications.index') }}" class="text-white">
+                <li class="nav-item">
+                    <a href="{{ route('admin.applications.index') }}" class="nav-link text-dark">
                         <i class="fas fa-file-alt me-2"></i> Applications
                     </a>
                 </li>
@@ -63,12 +63,12 @@
                                 <i class="fas fa-user me-2"></i>{{ auth()->user()->name }}
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end">
-                                <li>
+                                <li class="nav-item">
                                     <a class="dropdown-item" href="{{ route('profile.edit') }}">
                                         <i class="fas fa-user-edit me-2"></i>Profile
                                     </a>
                                 </li>
-                                <li>
+                                <li class="nav-item">
                                     <form method="POST" action="{{ route('logout') }}" class="d-inline">
                                         @csrf
                                         <button type="submit" class="dropdown-item">
