@@ -1,3 +1,83 @@
+# Job Board Application
+
+A modern, full-stack job board built with **Laravel 12** and **PHP 8.2** that supports three distinct user roles:
+
+* **Admin** – manage jobs, users, and monitor applications.
+* **Employer** – post and manage job listings, review incoming applications.
+* **Applicant** – browse jobs, apply, and track application status.
+
+The application demonstrates clean architecture, role-based authorization, queue-based email notifications, and a SPA-like experience powered by Blade/Tailwind and Vite.
+
+---
+
+## Features
+
+* Responsive landing page and public job listing
+* Role-based dashboards (Admin, Employer, Applicant)
+* CRUD for Jobs, Applications, and Users
+* Authentication & Registration with Laravel Breeze
+* Search & filtering for jobs
+* File upload for résumés
+* RESTful routing & policies
+* Queue + Mail notifications on new applications
+* Docker-friendly configuration
+
+## Tech Stack
+
+| Layer | Tech |
+|-------|------|
+| Backend | Laravel 12, PHP 8.2 |
+| Frontend | Blade, Tailwind CSS, Vite |
+| Auth | Laravel Sanctum |
+| Database | MySQL / MariaDB / SQLite |
+| Realtime | Pusher Channels |
+| Testing | PHPUnit, Pest |
+
+## Local Development
+
+1. **Clone & install dependencies**
+
+   ```bash
+   git clone <repo-url> job_board && cd job_board
+   composer install
+   npm install
+   ```
+
+2. **Environment**
+
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
+
+   Update DB credentials in `.env`.
+
+3. **Database**
+
+   ```bash
+   php artisan migrate --seed
+   ```
+
+4. **Run the dev servers** (hot-reloading & queues):
+
+   ```bash
+   php artisan serve   # API & backend
+   npm run dev         # Vite + Tailwind
+   php artisan queue:listen --tries=1
+   ```
+
+Visit `http://localhost:8000` to explore.
+
+## Testing
+
+```bash
+php artisan test   # or: composer test
+```
+
+---
+
+The remainder of this document contains the default Laravel README for reference.
+
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">
